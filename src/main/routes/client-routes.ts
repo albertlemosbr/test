@@ -4,6 +4,7 @@ import { adaptRoute } from '../adapter/express-route-adapter'
 import { makeLoadClientController } from '../factories/load-client'
 import { makeEditClientController } from '../factories/edit-client'
 import { makeDeleteClientController } from '../factories/delete-client'
+import { makeAddFavoriteController } from '../factories/add-favorite'
 
 export default (router: Router): void => {
   router.post('/client', adaptRoute(makeAddClientController()))
@@ -11,4 +12,5 @@ export default (router: Router): void => {
   router.get('/client/:id', adaptRoute(makeLoadClientController()))
   router.delete('/client/:id', adaptRoute(makeDeleteClientController()))
   router.put('/client', adaptRoute(makeEditClientController()))
+  router.post('/addfavorite', adaptRoute(makeAddFavoriteController()))
 }

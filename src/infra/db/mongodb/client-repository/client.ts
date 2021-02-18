@@ -7,8 +7,10 @@ import { LoadClientRepository } from '../../../../data/protocols/load-client-rep
 import { ObjectId } from 'mongodb'
 import { EditClientRepository } from '../../../../data/protocols/edit-client-repository'
 import { DeleteClientRepository } from '../../../../data/protocols/delete-client-repository'
+import { AddFavoriteRepository } from '../../../../data/protocols/add-favorite-repository'
+import { AddFavoriteModel } from '../../../../domain/usecases/add-favorite'
 
-export class ClientMongoRepository implements AddClientRepository, LoadClientRepository, EditClientRepository, DeleteClientRepository {
+export class ClientMongoRepository implements AddClientRepository, LoadClientRepository, EditClientRepository, DeleteClientRepository, AddFavoriteRepository {
   async add (clientData: AddClientModel): Promise<ClientModel> {
     const clientCollection = MongoHelper.getCollection('clients')
     const clientExist = await clientCollection.findOne({ email: clientData.email })
@@ -54,5 +56,33 @@ export class ClientMongoRepository implements AddClientRepository, LoadClientRep
     const clientCollection = MongoHelper.getCollection('clients')
     const deleteClient = await clientCollection.deleteOne({ _id: new ObjectId(id) })
     return deleteClient.result.ok ? true : false
+  }
+
+  async addFavorite(favoriteData: AddFavoriteModel): Promise<ClientModel> {
+    const clientCollection = MongoHelper.getCollection('clients')
+    const client = await clientCollection.findOne({ _id: new ObjectId(favoriteData.clientId) })
+    if (!client) {
+      throw new Error()
+    }
+
+    const productExists = await clientCollection.findOne({ _id: new ObjectId(favoriteData.clientId), 'favoriteProducts.id': favoriteData.productId })
+    if (productExists) {
+      throw new Error()
+    }
+
+    await clientCollection.updateOne(
+      { _id: new ObjectId(favoriteData.clientId) }, 
+      { 
+        $push: {
+          favoriteProducts: favoriteData.productFavorite
+        }
+      },
+      {
+        upsert: true
+      }
+    )
+
+    const result = await clientCollection.findOne({ _id: new ObjectId(favoriteData.clientId) })
+    return MongoHelper.mapper(result)
   }
 } 
