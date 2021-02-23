@@ -4,13 +4,22 @@
 
 #### Instalando
 
-Após entrar na pasta do projeto rode o comando abaixo
+Após entrar na pasta do projeto execute o comando abaixo
 
-`npm i`
+`npm i && npm run start`
 
 #### Usando
 
-Existem 5 Rotas Rest nesta api
+Existem 6 Rotas Rest nesta api
+
+GET http://localhost:5050/api/login - Para pegar o token de acesso a outras routas
+
+Saida esperada
+```js 
+"STRING_DO_TOKEN"
+```
+
+Todas as rotas daqui em diante precisam do token gerado pela rota de login passando via header nas requests em um campo nomeado token
 
 POST http://localhost:5050/api/client - Para cadastrar clientes
 Exemplo do obj para o post 

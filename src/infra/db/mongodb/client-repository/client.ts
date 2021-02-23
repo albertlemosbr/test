@@ -22,7 +22,7 @@ export class ClientMongoRepository implements AddClientRepository, LoadClientRep
     return MongoHelper.mapper(result.ops[0])
   }
 
-  async load(id: string): Promise<ClientModel[]> {
+  async load(id?: string): Promise<ClientModel[]> {
     const clientCollection = MongoHelper.getCollection('clients')
 
     if (!id) {

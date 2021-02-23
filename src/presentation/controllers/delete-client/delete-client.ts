@@ -1,6 +1,7 @@
 import { HttpResponse, HttpRequest, Controller, DeleteClient } from './delete-client-protocols'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { badRequest, ok, serverError } from '../../helpers/http-helper'
+import jwt from 'jsonwebtoken'
 
 export class DeleteClientController implements Controller {
   constructor (
@@ -11,6 +12,8 @@ export class DeleteClientController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      const token = httpRequest.headers?.['token']
+      jwt.verify(token, 'secret')
       const requiredFields = ['id']
       for (const field of requiredFields) {
         if (!httpRequest.params[field]) {
@@ -24,6 +27,9 @@ export class DeleteClientController implements Controller {
 
       return ok(client) 
     } catch (error) {
+      if (error.name === 'JsonWebTokenError') {
+        return badRequest(new Error('Invalid Token'))
+      }
       return serverError()
     }
   }

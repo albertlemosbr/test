@@ -43,8 +43,8 @@ describe('LoadClient Controller', () => {
 
   test('should call LoadClient and return a list of clients', async () => {
     const { sut, loadClientStub }  = makeSut()
-    const loadSpy = jest.spyOn(loadClientStub, 'load') 
-    sut.handle()
+    const loadSpy = jest.spyOn(loadClientStub, 'load')
+    sut.handle({})
     expect(loadSpy).toBeCalled()
   });
 
@@ -53,7 +53,7 @@ describe('LoadClient Controller', () => {
     jest.spyOn(loadClientStub, 'load').mockImplementationOnce(() => {
       return new Promise((resolve, reject) =>  reject(new Error()))
     })
-    const httpResponse = await sut.handle()
+    const httpResponse = await sut.handle({})
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   });

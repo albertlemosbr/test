@@ -5,6 +5,7 @@ import { makeLoadClientController } from '../factories/load-client'
 import { makeEditClientController } from '../factories/edit-client'
 import { makeDeleteClientController } from '../factories/delete-client'
 import { makeAddFavoriteController } from '../factories/add-favorite'
+import { makeLoginController } from '../factories/login'
 
 export default (router: Router): void => {
   router.post('/client', adaptRoute(makeAddClientController()))
@@ -13,4 +14,5 @@ export default (router: Router): void => {
   router.delete('/client/:id', adaptRoute(makeDeleteClientController()))
   router.put('/client', adaptRoute(makeEditClientController()))
   router.post('/addfavorite', adaptRoute(makeAddFavoriteController()))
+  router.get('/login', adaptRoute(makeLoginController()))
 }

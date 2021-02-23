@@ -1,6 +1,7 @@
 import { HttpResponse, HttpRequest, Controller, EmailValidator, EditClient } from './edit-client-protocols'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { badRequest, ok, serverError } from '../../helpers/http-helper'
+import jwt from 'jsonwebtoken'
 
 export class EditClientController implements Controller {
   constructor (
@@ -13,6 +14,8 @@ export class EditClientController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      const token = httpRequest.headers?.['token']
+      jwt.verify(token, 'secret')
       const requiredFields = ['name', 'email', 'id']
       for (const field of requiredFields) {
         if (!httpRequest.body[field]) {
@@ -34,6 +37,9 @@ export class EditClientController implements Controller {
 
       return ok(client) 
     } catch (error) {
+      if (error.name === 'JsonWebTokenError') {
+        return badRequest(new Error('Invalid Token'))
+      }
       return serverError()
     }
   }
